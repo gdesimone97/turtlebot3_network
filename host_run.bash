@@ -1,5 +1,5 @@
 #!/bin/bash
 
 sleep 3
-source $HOME/code/turtlebot/venv/bin/activate
-python3 /home/gdesimone/code/turtlebot/host.py > /home/gdesimone/code/turtlebot/log_host.txt
+source $HOME/turtlebot3_network/venv/bin/activate
+python3 $HOME/turtlebot3_network/host.py > /home/gdesimone/code/turtlebot/log_host.txt
