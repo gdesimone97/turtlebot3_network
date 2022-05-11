@@ -17,8 +17,8 @@ def get_master_ip(adresses: list, client_ip):
                 r = requests.get(f"http://{ip}:5000/ip", timeout=0.12, params=payload)
                 ip = r.text
                 return ip
-            except requests.exceptions.ConnectTimeout:
-                pass
+            except Exception as e:
+                print(e)
         time.sleep(3)
 
 def send_telegram(telegram_socket_ip, rasp_ip):
