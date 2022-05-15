@@ -17,9 +17,9 @@ class Handler:
         self.server_socket.listen()
         self.live = True
         self._ip = ""
-        th = Thread(target=self.thread)
-        th.setDaemon(True)
-        th.start()
+        self.th = Thread(target=self.thread)
+        self.th.setDaemon(True)
+        self.th.start()
 
     def thread(self):
         while self.live:
@@ -61,6 +61,7 @@ def main():
     updater.idle()
     updater.stop()
     handler.stop()
+    time.sleep(1)
     del updater
 
 def emergency(error):
