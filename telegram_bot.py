@@ -87,7 +87,7 @@ if __name__ == "__main__":
         except Exception as e:
             print("Error!")
             print(e)
-            time.sleep(2)
+            time.sleep(30)
             i += 1
             error = e
     emergency(error)
