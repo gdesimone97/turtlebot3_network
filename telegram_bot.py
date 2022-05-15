@@ -53,6 +53,7 @@ def main():
     i = 0
     updater.start_polling()
     updater.idle()
+    updater.stop()
 
 def emergency(error):
     global updater
