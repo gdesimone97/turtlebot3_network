@@ -51,4 +51,5 @@ if __name__ == "__main__":
     updater = Updater(token=KEY)
     dispatcher = updater.dispatcher
     handler = Handler(dispatcher, updater)
+    print("Bot started")
     updater.start_polling()
