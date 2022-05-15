@@ -30,10 +30,24 @@ def get_host_broadcast(device):
     broadcast_ip = ni.ifaddresses(device)[ni.AF_INET][0]['broadcast']
     return broadcast_ip
 
+def address2bit_number(address):
+    address = address.split(".")
+    adr_out = []
+    for adr in address:
+        adr_out.append(bin(adr).count("1"))
+    count = sum(adr_out)
+    return count
+
 def get_addresses(ip):
     ip_list = ip.split(".")
-    ip = ip_list[0]+"."+ip_list[1]+"."+ip_list[2]+"."+"0"
-    address = [str(x) for x in ipaddress.IPv4Network(f"{ip}/24")]
+    submask = get_host_submask(get_interface()).split(".")
+    data = zip(ip_list, submask)
+    ip_out_list = []
+    for ip, mask in data:
+        ip_out_list.append((ip & mask))
+    ip_out = ip_out_list[0] + "." + ip_out_list[1] + "." + ip_out_list[2] + "." + ip_out_list[3]
+    bit_number = address2bit_number(submask)
+    address = [str(x) for x in ipaddress.IPv4Network(f"{ip_out}/{bit_number}")]
     return address
 
 def get_interface():
