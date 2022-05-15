@@ -22,7 +22,7 @@ class Handler:
         th.start()
 
     def thread(self):
-        while self.updater.running:
+        while self.live:
             clientConnected, clientAddress = self.server_socket.accept()
             res = clientConnected.recv(1024)
             self.ip = res.decode()
@@ -30,6 +30,9 @@ class Handler:
             context = CallbackContext(self.dispatcher)
             self.echo(context)
             time.sleep(0.5)
+
+    def stop(self):
+        self.live = False
 
     def _get_curr_dir(self):
         curr_dir = os.path.abspath(os.path.dirname(os.path.relpath(__file__)))
@@ -57,6 +60,7 @@ def main():
     updater.start_polling()
     updater.idle()
     updater.stop()
+    handler.stop()
     del updater
 
 def emergency(error):
