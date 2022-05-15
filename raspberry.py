@@ -31,10 +31,11 @@ def send_telegram(telegram_socket_ip, rasp_ip):
 if __name__ == "__main__":
     # check_connetion()
     print("Configuration start")
+    TELEGRAM_SERVER = "193.205.163.163"
     ip = get_host_ip("wlan0")
     addresses = get_addresses(ip)
     master_ip = get_master_ip(addresses, ip)
-    send_telegram("server-peppodesmo.ddns.net", ip)
+    send_telegram(TELEGRAM_SERVER, ip)
     exe_path = os.path.abspath(os.path.dirname(os.path.relpath(__file__)))
     exe_path = Path(exe_path).joinpath("modify.py")
     cmd = f"python3 {exe_path} {master_ip} {ip}"
