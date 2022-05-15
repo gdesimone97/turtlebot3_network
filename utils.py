@@ -22,6 +22,14 @@ def get_host_ip(device):
     ip = ni.ifaddresses(device)[ni.AF_INET][0]['addr']
     return ip
 
+def get_host_submask(device):
+    netmask = ni.ifaddresses(device)[ni.AF_INET][0]['netmask']
+    return netmask
+
+def get_host_broadcast(device):
+    broadcast_ip = ni.ifaddresses(device)[ni.AF_INET][0]['broadcast']
+    return broadcast_ip
+
 def get_addresses(ip):
     ip_list = ip.split(".")
     ip = ip_list[0]+"."+ip_list[1]+"."+ip_list[2]+"."+"0"
