@@ -10,17 +10,19 @@ import time
 class Handler:
     def __init__(self, dispatcher, updater):
         self.dispatcher = dispatcher
-        self.updater = updater
+        self.updater: Updater = updater
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         device = get_interface()
         self.server_socket.bind((get_host_ip(device), 9090))
         self.server_socket.listen()
         self.live = True
         self._ip = ""
-        Thread(target=self.thread).start()
+        th = Thread(target=self.thread)
+        th.setDaemon(True)
+        th.start()
 
     def thread(self):
-        while True:
+        while self.updater.running:
             clientConnected, clientAddress = self.server_socket.accept()
             res = clientConnected.recv(1024)
             self.ip = res.decode()
@@ -47,6 +49,7 @@ class Handler:
 
 def main():
     global i
+    updater = Updater(token=KEY)
     dispatcher = updater.dispatcher
     handler = Handler(dispatcher, updater)
     print("Bot started")
@@ -54,9 +57,10 @@ def main():
     updater.start_polling()
     updater.idle()
     updater.stop()
+    del updater
 
 def emergency(error):
-    global updater
+    updater = Updater(token=KEY)
     chat_id = "268005350"
     text = "Bot disabled. Error: {}".format(error)
     bot: Bot = updater.bot
@@ -66,16 +70,15 @@ def emergency(error):
 if __name__ == "__main__":
     KEY = r"5379805953:AAEzJmUZrVSSQ3JjXVi-Rlbj2VUU_cOOm-A"
     channel_id = r"-1582471432"
-    updater = Updater(token=KEY)
     i = 0
     error = ""
-    while i < 1:
+    while i < 10:
         try:
             main()
         except Exception as e:
             print("Error!")
             print(e)
-            time.sleep(.1)
+            time.sleep(30)
             i += 1
             error = e
     emergency(error)
