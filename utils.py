@@ -32,6 +32,7 @@ def get_host_broadcast(device):
 
 def address2bit_number(address):
     address = address.split(".")
+    address = list(map(lambda x: int(x), address))
     adr_out = []
     for adr in address:
         adr_out.append(bin(adr).count("1"))
@@ -40,11 +41,15 @@ def address2bit_number(address):
 
 def get_addresses(ip):
     ip_list = ip.split(".")
-    submask = get_host_submask(get_interface()).split(".")
-    data = zip(ip_list, submask)
+    submask = get_host_submask(get_interface())
+    submask_list = submask.split(".")
+    ip_list = list(map(lambda x: int(x), ip_list))
+    submask_list = list(map(lambda x: int(x), submask_list))
+    data = zip(ip_list, submask_list)
     ip_out_list = []
     for ip, mask in data:
         ip_out_list.append((ip & mask))
+    ip_out_list = list(map(lambda x: str(x), ip_out_list))
     ip_out = ip_out_list[0] + "." + ip_out_list[1] + "." + ip_out_list[2] + "." + ip_out_list[3]
     bit_number = address2bit_number(submask)
     address = [str(x) for x in ipaddress.IPv4Network(f"{ip_out}/{bit_number}")]
