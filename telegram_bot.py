@@ -22,8 +22,11 @@ class Handler:
         self.th.start()
 
     def thread(self):
-        while self.live:
-            clientConnected, clientAddress = self.server_socket.accept()
+        while True:
+            try:
+                clientConnected, clientAddress = self.server_socket.accept()
+            except OSError:
+                continue
             res = clientConnected.recv(1024)
             self.ip = res.decode()
             print("Received request from", self.ip)
@@ -33,6 +36,8 @@ class Handler:
 
     def stop(self):
         self.live = False
+        self.server_socket.shutdown(socket.SHUT_RDWR)
+        self.server_socket.close()
 
     def _get_curr_dir(self):
         curr_dir = os.path.abspath(os.path.dirname(os.path.relpath(__file__)))
@@ -62,7 +67,6 @@ def main():
     updater.stop()
     handler.stop()
     time.sleep(1)
-    del updater
 
 def emergency(error):
     updater = Updater(token=KEY)
@@ -83,7 +87,7 @@ if __name__ == "__main__":
         except Exception as e:
             print("Error!")
             print(e)
-            time.sleep(30)
+            time.sleep(2)
             i += 1
             error = e
     emergency(error)
