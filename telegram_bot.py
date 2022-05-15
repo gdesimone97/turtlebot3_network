@@ -52,6 +52,7 @@ def main():
     print("Bot started")
     i = 0
     updater.start_polling()
+    updater.idle()
 
 def emergency(error):
     global updater
