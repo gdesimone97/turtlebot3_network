@@ -131,3 +131,4 @@ dmypy.json
 .idea
 log_host.txt
 log.txt
+*.py~
