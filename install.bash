@@ -16,6 +16,9 @@ sudo apt-get install -y ros-noetic-joy ros-noetic-teleop-twist-joy \
   ros-noetic-move-base ros-noetic-urdf ros-noetic-xacro \
   ros-noetic-compressed-image-transport ros-noetic-rqt* ros-noetic-rviz \
   ros-noetic-gmapping ros-noetic-navigation ros-noetic-interactive-markers 
-sudo apt install ros-noetic-dynamixel-sdk
-sudo apt install ros-noetic-turtlebot3-msgs
-sudo apt install ros-noetic-turtlebot3
+sudo apt install -y ros-noetic-dynamixel-sdk
+sudo apt install -y ros-noetic-turtlebot3-msgs
+sudo apt install -y ros-noetic-turtlebot3
+cd $HOME
+echo "export ROS_MASTER_URI=http://192.168.1.1:11311" >> .bashrc
+echo "export ROS_HOSTNAME=192.168.1.1" >> .bashrc
