@@ -22,3 +22,4 @@ sudo apt install -y ros-noetic-turtlebot3
 cd $HOME
 echo "export ROS_MASTER_URI=http://192.168.1.1:11311" >> .bashrc
 echo "export ROS_HOSTNAME=192.168.1.1" >> .bashrc
+echo "export TURTLEBOT3_MODEL=waffle_pi" >> .bashrc
