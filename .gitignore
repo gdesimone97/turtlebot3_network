@@ -132,3 +132,4 @@ dmypy.json
 log_host.txt
 log.txt
 *.py~
+conf.json
