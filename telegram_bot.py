@@ -59,8 +59,9 @@ def main():
     global i
     updater = Updater(token=KEY)
     dispatcher = updater.dispatcher
-    handler = Handler(dispatcher, updater)
     print("Bot started")
+    handler = Handler(dispatcher, updater)
+    print("Handler configurated")
     i = 0
     updater.start_polling()
     updater.idle()
