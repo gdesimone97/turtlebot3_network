@@ -28,7 +28,12 @@ class Handler:
             except OSError:
                 continue
             res = clientConnected.recv(1024)
-            self.ip = res.decode()
+            try:
+                self.ip = res.decode()
+            except Exception as e:
+                print(e)
+                emergency(e)
+                continue
             print("Received request from", self.ip)
             context = CallbackContext(self.dispatcher)
             self.echo(context)
