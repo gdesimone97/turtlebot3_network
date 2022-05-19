@@ -31,6 +31,7 @@ class Handler:
             try:
                 self.ip = res.decode()
             except Exception as e:
+                self.ip = ""
                 print(e)
                 emergency(e)
                 continue
