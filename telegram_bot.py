@@ -17,6 +17,9 @@ class Handler:
         self.server_socket.listen()
         self.live = True
         self._ip = ""
+        self.thread_start()
+
+    def thread_start(self):
         self.th = Thread(target=self.thread)
         self.th.setDaemon(True)
         self.th.start()
@@ -27,14 +30,15 @@ class Handler:
                 clientConnected, clientAddress = self.server_socket.accept()
             except OSError:
                 continue
-            res = clientConnected.recv(1024)
             try:
+                res = clientConnected.recv(1024)
                 self.ip = res.decode()
             except Exception as e:
                 self.ip = ""
                 print(e)
                 emergency(e)
-                continue
+                self.thread_start()
+                return
             print("Received request from", self.ip)
             context = CallbackContext(self.dispatcher)
             self.echo(context)
