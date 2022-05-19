@@ -13,7 +13,9 @@ class Handler:
         self.updater: Updater = updater
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         device = get_interface()
-        self.server_socket.bind((get_host_ip(device), 9090))
+        host_ip = get_host_ip(device)
+        print("Ip device:", host_ip)
+        self.server_socket.bind((host_ip, 9090))
         self.server_socket.listen()
         self.live = True
         self._ip = ""
@@ -25,7 +27,7 @@ class Handler:
         self.th.start()
 
     def thread(self):
-        while True:
+        while self.live:
             try:
                 clientConnected, clientAddress = self.server_socket.accept()
             except OSError:
