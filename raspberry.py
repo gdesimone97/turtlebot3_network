@@ -14,7 +14,7 @@ def get_master_ip(adresses: list, client_ip):
                 continue
             try:
                 print(f"\r{ip}", end="")
-                r = requests.get(f"http://{ip}:5000/ip", timeout=0.12, params=payload)
+                r = requests.get(f"http://{ip}:5000/ip", timeout=0.15, params=payload)
                 if r.status_code != 200:
                     print("Status code not 200:", r.status_code)
                     continue
