@@ -25,7 +25,6 @@ def get_master_ip(adresses: list, client_ip):
         if count >= LIMIT:
             print("Not connected")
             print("Return code: -1")
-            break
         time.sleep(3)
 
 def send_telegram(telegram_socket_ip, rasp_ip):
@@ -38,12 +37,9 @@ def send_telegram(telegram_socket_ip, rasp_ip):
 if __name__ == "__main__":
     # check_connetion()
     print("Configuration start")
-    # TELEGRAM_SERVER = "193.205.163.163"
-    TELEGRAM_SERVER = "server-peppodesmo.ddns.net"
     ip = get_host_ip("wlan0")
     addresses = get_addresses(ip)
     master_ip = get_master_ip(addresses, ip)
-    send_telegram(TELEGRAM_SERVER, ip)
     send_telegram(master_ip, ip)
     exe_path = os.path.abspath(os.path.dirname(os.path.relpath(__file__)))
     exe_path = Path(exe_path).joinpath("modify.py")
