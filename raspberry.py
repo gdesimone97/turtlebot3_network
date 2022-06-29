@@ -7,21 +7,24 @@ import os
 import socket
 
 def get_master_ip(adresses: list, client_ip):
+    LIMIT = 3
     payload = {"client_ip": client_ip}
+    count = 0
     while True:
         for ip in adresses:
             if ip.split(".")[-1] == "0":
                 continue
             try:
                 print(f"\r{ip}", end="")
-                r = requests.get(f"http://{ip}:5000/ip", timeout=0.15, params=payload)
-                if r.status_code != 200:
-                    print("Status code not 200:", r.status_code)
-                    continue
+                r = requests.get(f"http://{ip}:5000/ip", timeout=0.12, params=payload)
                 ip = r.text
                 return ip
-            except Exception as e:
-                print(e)
+            except requests.exceptions.ConnectTimeout:
+                pass
+        count += 1
+        if count >= LIMIT:
+            print("Not connected")
+            print("Return code: -1")
         time.sleep(3)
 
 def send_telegram(telegram_socket_ip, rasp_ip):
@@ -34,11 +37,10 @@ def send_telegram(telegram_socket_ip, rasp_ip):
 if __name__ == "__main__":
     # check_connetion()
     print("Configuration start")
-    TELEGRAM_SERVER = "193.205.163.163"
     ip = get_host_ip("wlan0")
     addresses = get_addresses(ip)
     master_ip = get_master_ip(addresses, ip)
-    send_telegram(TELEGRAM_SERVER, ip)
+    send_telegram(master_ip, ip)
     exe_path = os.path.abspath(os.path.dirname(os.path.relpath(__file__)))
     exe_path = Path(exe_path).joinpath("modify.py")
     cmd = f"python3 {exe_path} {master_ip} {ip}"
