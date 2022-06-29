@@ -14,7 +14,7 @@ def get_master_ip(adresses: list, client_ip):
                 continue
             try:
                 print(f"\r{ip}", end="")
-                r = requests.get(f"http://{ip}:5000/ip", timeout=0.15, params=payload)
+                r = requests.get(f"http://{ip}:5000/ip", timeout=0.12, params=payload)
                 if r.status_code != 200:
                     print("Status code not 200:", r.status_code)
                     continue
@@ -34,7 +34,8 @@ def send_telegram(telegram_socket_ip, rasp_ip):
 if __name__ == "__main__":
     # check_connetion()
     print("Configuration start")
-    TELEGRAM_SERVER = "193.205.163.163"
+    # TELEGRAM_SERVER = "193.205.163.163"
+    TELEGRAM_SERVER = "server-peppodesmo.ddns.net"
     ip = get_host_ip("wlan0")
     addresses = get_addresses(ip)
     master_ip = get_master_ip(addresses, ip)
