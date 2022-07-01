@@ -34,8 +34,8 @@ def send_telegram(telegram_socket_ip, rasp_ip):
 if __name__ == "__main__":
     # check_connetion()
     print("Configuration start")
-    # TELEGRAM_SERVER = "193.205.163.163"
-    TELEGRAM_SERVER = "server-peppodesmo.ddns.net"
+    TELEGRAM_SERVER = "193.205.163.163"
+    #TELEGRAM_SERVER = "server-peppodesmo.ddns.net"
     ip = get_host_ip("wlan0")
     addresses = get_addresses(ip)
     master_ip = get_master_ip(addresses, ip)
