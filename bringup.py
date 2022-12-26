@@ -8,9 +8,28 @@ def check_ping(ip):
     p = subprocess.run(cmd, shell=True, capture_output=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     return True if p.returncode == 0 else False
 
+def run_command(cmd, ip_turtle, background=False, shell=True):
+    cmd_ssh = f"sshpass -p turtlebot ssh -o StrictHostKeyChecking=no ubuntu@{ip_turtle}"
+    if shell:
+        cmd_ssh += f" /bin/bash {cmd}"
+    else:
+        cmd_ssh += f" {cmd} "
+    if background:
+        p = subprocess.Popen(cmd_ssh, shell=True, stderr=subprocess.STDOUT, stdin=subprocess.PIPE)
+        p.communicate(cmd)
+    else:
+        p = subprocess.run(cmd_ssh, shell=True, stderr=subprocess.STDOUT)
+    return p
+
 def bringup(ip_target, ip_host):
-    cmd = f"bash bringup_remote.bash {ip_target} {ip_host}"
-    p = subprocess.run(cmd, shell=True, stderr=subprocess.STDOUT)
+    cmd = f"run/bringup_custom {ip_target} {ip_host}"
+    cmd_kill = '"ps aux | grep turtlebot3_robot.launch | pkill launch"'
+    try:
+        run_command(cmd, ip_target)
+    except KeyboardInterrupt:
+        pass
+    run_command(cmd_kill, ip_target, shell=False)
+
 
 if __name__ == "__main__":
     curr_dir = Path(get_curr_dir(__file__))
