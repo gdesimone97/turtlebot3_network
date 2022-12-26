@@ -71,17 +71,21 @@ def get_ip_lives(ping_text: str):
         if "alive" in row:
             match = pattern.findall(row)[0]
             ip_lives.append(match)
+    print("IP lives:", ip_lives)
     return ip_lives
 
 def get_mac_list(ip_list: list):
     mac_list = []
-    pattern = re.compile("\w+:\w+:\w+:\w+")
+    pattern = re.compile("\w+:\w+:\w+:\w+:\w+:\w+")
     cmd_raw = "arp -a {}"
     for ip in ip_list:
         cmd = cmd_raw.format(ip)
         p = subprocess.run(cmd, shell=True, capture_output=True, check=False, text=True)
         text = p.stdout
-        mac = pattern.findall(text)[0]
+        try:
+            mac = pattern.findall(text)[0]
+        except IndexError:
+            mac = None
         mac_list.append(mac)
     return mac_list
 
@@ -97,3 +101,13 @@ def read_history():
     with open(str(target_fil)) as fil:
         ip_target = fil.read()
         return ip_target
+
+def check_mac(ip_mac_list: zip):
+    ip_mac_list = list(ip_mac_list)
+    print("IP MAC pairs:")
+    print(ip_mac_list)
+    mac_target = get_conf()["target_mac"]
+    for ip, mac in ip_mac_list:
+        if mac == mac_target:
+            return ip
+    raise Exception("Device not found")
