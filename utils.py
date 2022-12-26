@@ -1,65 +1,99 @@
-import requests
-import time
 import netifaces as ni
-import ipaddress
 import os
 import json
 from pathlib import Path
+import subprocess
+import re
 
 conf = None
 
-def get_curr_dir(fil):
-    return os.path.abspath(os.path.dirname(os.path.relpath(fil)))
-
-def check_connetion():
-    while True:
-        r = requests.get("https://www.google.com/")
-        if r.status_code == 200:
-            break
-        time.sleep(3)
-
-def get_host_ip(device):
-    ip = ni.ifaddresses(device)[ni.AF_INET][0]['addr']
-    return ip
-
-def get_host_submask(device):
-    netmask = ni.ifaddresses(device)[ni.AF_INET][0]['netmask']
-    return netmask
-
-def get_host_broadcast(device):
-    broadcast_ip = ni.ifaddresses(device)[ni.AF_INET][0]['broadcast']
-    return broadcast_ip
-
-def address2bit_number(address):
-    address = address.split(".")
-    address = list(map(lambda x: int(x), address))
-    adr_out = []
-    for adr in address:
-        adr_out.append(bin(adr).count("1"))
-    count = sum(adr_out)
-    return count
-
-def get_addresses(ip):
-    ip_list = ip.split(".")
-    submask = get_host_submask(get_interface())
-    submask_list = submask.split(".")
-    ip_list = list(map(lambda x: int(x), ip_list))
-    submask_list = list(map(lambda x: int(x), submask_list))
-    data = zip(ip_list, submask_list)
-    ip_out_list = []
-    for ip, mask in data:
-        ip_out_list.append((ip & mask))
-    ip_out_list = list(map(lambda x: str(x), ip_out_list))
-    ip_out = ip_out_list[0] + "." + ip_out_list[1] + "." + ip_out_list[2] + "." + ip_out_list[3]
-    bit_number = address2bit_number(submask)
-    address = [str(x) for x in ipaddress.IPv4Network(f"{ip_out}/{bit_number}")]
-    return address
-
-def get_interface():
+def get_conf():
     global conf
     if conf is None:
         curr_dir = Path(get_curr_dir(__file__))
         fil = str(curr_dir.joinpath("conf.json"))
         with open(fil) as f:
             conf = json.load(f)
-    return conf["interface"]
+    return conf
+
+def get_curr_dir(fil):
+    return os.path.abspath(os.path.dirname(os.path.relpath(fil)))
+
+def get_host_ip(interface):
+    ip = ni.ifaddresses(interface)[ni.AF_INET][0]['addr']
+    return ip
+
+def get_host_submask(interface):
+    netmask = ni.ifaddresses(interface)[ni.AF_INET][0]['netmask']
+    netmask_int = str2list(netmask)
+    netmask_length = get_netmasklenght(netmask_int)
+    return netmask, netmask_length
+
+def get_subnet(ip: str, netmask: str):
+    ip_list = str2list(ip)
+    netmask_list = str2list(netmask)
+    subnet = []
+    for ip, netmask in zip(ip_list, netmask_list):
+        subnet.append(ip & netmask)
+    return subnet
+
+def get_netmasklenght(netmask: list) -> int:
+    lenght = 0
+    for n in netmask:
+        n_bin = bin(n)
+        lenght += n_bin.count("1")
+    return lenght
+
+def get_interface():
+    return get_conf()["interface"]
+
+def list2str(data_list: list):
+    str_list = ""
+    for data in data_list:
+        str_list += str(data) + "."
+    return str_list[:-1]
+
+def str2list(data_str: str):
+    data_str_list = data_str.split(".")
+    return list(map(lambda x: int(x), data_str_list))
+
+def ping(subnet, netmask_length):
+    subnet = list2str(subnet)
+    cmd = f"fping -r 1 -g {subnet}/{netmask_length}"
+    p = subprocess.run(cmd, check=False, capture_output=True, shell=True, text=True)
+    return p.stdout
+
+def get_ip_lives(ping_text: str):
+    pattern = re.compile("\d+\.\d+\.\d+\.\d+")
+    rows = ping_text.split("\n")
+    ip_lives = []
+    for row in rows:
+        if "alive" in row:
+            match = pattern.findall(row)[0]
+            ip_lives.append(match)
+    return ip_lives
+
+def get_mac_list(ip_list: list):
+    mac_list = []
+    pattern = re.compile("\w+:\w+:\w+:\w+")
+    cmd_raw = "arp -a {}"
+    for ip in ip_list:
+        cmd = cmd_raw.format(ip)
+        p = subprocess.run(cmd, shell=True, capture_output=True, check=False, text=True)
+        text = p.stdout
+        mac = pattern.findall(text)[0]
+        mac_list.append(mac)
+    return mac_list
+
+def write_history(ip_target):
+    curr_dir = Path(get_curr_dir(__file__))
+    target_fil = curr_dir.joinpath("history.db")
+    with open(str(target_fil), "w") as fil:
+        fil.write(ip_target)
+
+def read_history():
+    curr_dir = Path(get_curr_dir(__file__))
+    target_fil = curr_dir.joinpath("history.db")
+    with open(str(target_fil)) as fil:
+        ip_target = fil.read()
+        return ip_target
