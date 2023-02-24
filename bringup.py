@@ -22,8 +22,9 @@ def run_command(cmd, ip_turtle, background=False, shell=True):
     return p
 
 def bringup(ip_target, ip_host):
-    cmd = f"run/bringup_custom {ip_target} {ip_host}"
+    cmd = f"run/bringup_custom {ip_host}"
     cmd_kill = '"ps aux | grep turtlebot3_robot.launch | pkill launch"'
+    run_command(cmd_kill, ip_target, shell=False)
     try:
         run_command(cmd, ip_target)
     except KeyboardInterrupt:
