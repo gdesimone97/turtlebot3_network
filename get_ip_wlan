@@ -1,0 +1,16 @@
+#!/usr/bin/python3
+import os
+import netifaces as ni
+
+
+def get_host_ip(interface):
+    ip = ni.ifaddresses(interface)[ni.AF_INET][0]['addr']
+    return ip
+
+if __name__ == "__main__":
+    try:
+        interface = os.environ["INTERFACE"]
+    except KeyError:
+        raise Exception("You need to specify the INTERFACE variable into .bashrc file")
+    ip = get_host_ip(interface)
+    print(ip)
