@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 from utils import get_curr_dir, read_history, get_host_ip, get_interface
 from pathlib import Path
 import subprocess
