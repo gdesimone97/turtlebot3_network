@@ -45,7 +45,11 @@ def get_netmasklenght(netmask: list) -> int:
     return lenght
 
 def get_interface():
-    return get_conf()["interface"]
+    # return get_conf()["interface"]
+    try:
+        return os.environ["INTERFACE"]
+    except KeyError:
+        raise Exception("You need to specify the INTERFACE variable into .bashrc file")
 
 def list2str(data_list: list):
     str_list = ""
