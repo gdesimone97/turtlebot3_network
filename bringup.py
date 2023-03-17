@@ -5,6 +5,10 @@ from pathlib import Path
 import subprocess
 import signal
 
+def kill(*args):
+    cmd_kill = '"ps aux | grep turtlebot3_robot.launch | pkill launch"'
+    run_command(cmd_kill, ip_target, shell=False)
+
 def check_ping(ip):
     cmd = f"fping -c1 {ip}"
     p = subprocess.run(cmd, shell=True, capture_output=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -35,6 +39,7 @@ def bringup(ip_target, ip_host):
 
 
 if __name__ == "__main__":
+    signal.signal(signal.CTRL_C_EVENT, kill)
     curr_dir = Path(get_curr_dir(__file__))
     target_fil = "history.db"
     if not curr_dir.joinpath(target_fil).exists() or not check_ping(read_history()):
