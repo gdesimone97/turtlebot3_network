@@ -39,7 +39,6 @@ def bringup(ip_target, ip_host):
 
 
 if __name__ == "__main__":
-    signal.signal(signal.CTRL_C_EVENT, kill)
     curr_dir = Path(get_curr_dir(__file__))
     target_fil = "history.db"
     if not curr_dir.joinpath(target_fil).exists() or not check_ping(read_history()):
@@ -50,4 +49,5 @@ if __name__ == "__main__":
     ip_host = get_host_ip(get_interface())
     print("Turtlebot ip:", ip_target )
     print("PC ip:", ip_host)
+    signal.signal(signal.CTRL_C_EVENT, kill)
     bringup(ip_target, ip_host)
