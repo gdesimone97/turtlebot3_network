@@ -6,7 +6,7 @@ import subprocess
 import signal
 
 def kill(*args):
-    print("sono qui")
+    print("Bring-up shutdown...")
     cmd_kill = '"ps aux | grep turtlebot3_robot.launch | pkill launch"'
     run_command(cmd_kill, ip_target, shell=False)
 
