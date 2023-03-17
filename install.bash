@@ -3,7 +3,7 @@ if [ "$#" -ne 1 ]; then
 	exit
 fi
 sudo apt update
-sudo apt install -y sshpass fping python3-pip
+sudo apt install -y sshpass fping python3-pip ntpdate
 python3 -m pip install -r requirements.txt
 sudo chmod +x get_ip_wlan
 sudo cp get_ip_wlan /usr/local/bin
