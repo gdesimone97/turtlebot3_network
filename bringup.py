@@ -49,5 +49,5 @@ if __name__ == "__main__":
     ip_host = get_host_ip(get_interface())
     print("Turtlebot ip:", ip_target )
     print("PC ip:", ip_host)
-    signal.signal(signal.CTRL_C_EVENT, kill)
+    signal.signal(signal.SIGINT, kill)
     bringup(ip_target, ip_host)
