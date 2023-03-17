@@ -10,4 +10,6 @@
 4. RUN ```cd && source .bashrc```
 
 ## How to use
-1. RUN ```python3 bringup.py```
+1. RUN ```roscore```
+2. Open another shell
+3. RUN ```python3 bringup.py```
